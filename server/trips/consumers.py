@@ -1,7 +1,13 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.db import database_sync_to_async
 
 
 class TaxiConsumer(AsyncJsonWebsocketConsumer):
+
+    @database_sync_to_async
+    def _get_user_group(self, user):
+        return user.groups.first().name
+
     groups = ['test']
 
     async def connect(self):
@@ -9,17 +15,25 @@ class TaxiConsumer(AsyncJsonWebsocketConsumer):
         if user.is_anonymous:
             await self.close()
         else:
-            await self.channel_layer.group_add(
-                group='test',
-                channel=self.channel_name
-            )
+            user_group = await self._get_user_group(user)
+            if user_group == 'driver':
+                await self.channel_layer.group_add(
+                    group='drivers',
+                    channel=self.channel_name
+                )
             await self.accept()
 
     async def disconnect(self, code):
-        await self.channel_layer.group_discard(
-            group='test',
-            channel=self.channel_name
-        )
+        user = self.scope['user']
+        if user.is_anonymous:
+            await self.close()
+        else:
+            user_group = await self._get_user_group(user)
+            if user_group == 'driver':
+                await self.channel_layer.group_discard(
+                    group='drivers',
+                    channel=self.channel_name
+                )
         await super().disconnect(code)
 
     async def echo_message(self, message):
