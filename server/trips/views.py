@@ -4,7 +4,7 @@ from rest_framework import generics, viewsets, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Trip
-from .serializers import UserSerializer, LogInSerializer, TripSerializer
+from .serializers import UserSerializer, NestedTripSerializer, LogInSerializer
 
 
 class SignUpView(generics.CreateAPIView):
@@ -20,7 +20,7 @@ class TripView(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'id'
     lookup_url_kwarg = 'trip_id'
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = TripSerializer
+    serializer_class = NestedTripSerializer
 
     def get_queryset(self):
         user = self.request.user
