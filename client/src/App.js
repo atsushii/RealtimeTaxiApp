@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Navbar } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Navbar, Button, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Route, Link, Switch } from 'react-router-dom';
 
@@ -9,6 +9,8 @@ import LogIn from './components/Login';
 import './App.css'
 
 function App() {
+  const [isLoggedIn, setLoggedIn] = useState(false);
+  const logIn = (username, password) => setLoggedIn(true);
   return (
     <>
       <Navbar bg='light' expand='lg' variant='light'>
@@ -16,7 +18,14 @@ function App() {
           <Navbar.Brand className='logo'>Taxi</Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle />
-        <Navbar.Collapse></Navbar.Collapse>
+        <Navbar.Collapse>
+          {
+            isLoggedIn &&
+            <Form inline className='ml-auto'>
+              <Button type='button'>Log out</Button>
+            </Form>
+          }
+        </Navbar.Collapse>
       </Navbar>
       <Container className='pt-3'>
         <Switch>
@@ -28,7 +37,9 @@ function App() {
               </div>
             )} />
           <Route path='/sign-up' component={SignUp} />
-          <Route path='/log-in' component={LogIn} />
+          <Route path='/log-in' render={() => (
+            <LogIn logIn={logIn} />
+          )} />
         </Switch>
       </Container>
     </>
