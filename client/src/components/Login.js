@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Formik } from 'formik';
 import { Breadcrumb, Card, Col, Row, Button, Form } from 'react-bootstrap';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function LogIn(props) {
 
-    const [isSubmitted, setSubmitted] = useState(false);
-
-    const onSubmit = (values, actions) => {
-        props.logIn(values.username, values.password);
-        setSubmitted(true);
-    }
+    const onSubmit = async (values, actions) => {
+        try {
+            await props.logIn(values.username, values.password);
+        }
+        catch (error) {
+            console.error(error)
+        }
+    };
    
-    if (isSubmitted) {
-        return <Redirect to='/' />;
-    }
-
     return (
         <Row>
             <Col lg={12}>
@@ -31,8 +29,8 @@ function LogIn(props) {
                             password: ''
                         }}
                         onSubmit={onSubmit}
-                        >
-                            {({
+                        
+                            render={({
                                 handleChange,
                                 handleSubmit,
                                 values
@@ -58,7 +56,7 @@ function LogIn(props) {
                                     <Button block type='submit' variant='primary'>Log in</Button>
                                 </Form>
                             )}
-                        </Formik>
+                        />
                     </Card.Body>
                     <p className='mt-3 text-center'>
                         Don't have an account? <Link to='/sign-up'>Sign up!</Link>
