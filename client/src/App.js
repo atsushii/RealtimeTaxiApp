@@ -50,7 +50,7 @@ function App() {
               <div className='middle-center'>
                 <h1 className='landing logo'>Taxi</h1>
                 {
-                  isLoggedIn &&
+                  !isLoggedIn &&
                   <Link
                     id='signUp'
                     className='btn btn-primary'
