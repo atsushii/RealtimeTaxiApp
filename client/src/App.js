@@ -22,11 +22,20 @@ function App() {
         'taxi.auth', JSON.stringify(response.data)
       );
       setLoggedIn(true)
+
+      return { response, isError: false }
     }
     catch (error) {
       console.error(error);
+
+      return { response: error, isError: true }
     }
   }
+
+  const logOut = () => {
+    window.localStorage.removeItem('taxi.auth');
+    setLoggedIn(false)
+  };
 
   return (
     <>
@@ -39,7 +48,7 @@ function App() {
           {
             isLoggedIn &&
             <Form inline className='ml-auto'>
-              <Button type='button'>Log out</Button>
+              <Button type='button' onClick={() => logOut()}>Log out</Button>
             </Form>
           }
         </Navbar.Collapse>
@@ -49,8 +58,22 @@ function App() {
           <Route exact path='/' render={() => (
               <div className='middle-center'>
                 <h1 className='landing logo'>Taxi</h1>
-                <Link className='btn btn-primary' to='/sign-up'>Sign up</Link>
-                <Link className='btn btn-primary' to='/log-in'>Log in</Link>
+                {
+                  !isLoggedIn &&
+                  <Link
+                    id='signUp'
+                    className='btn btn-primary'
+                    to='/sign-up'
+                  >Sign up</Link>
+                }
+                {
+                  !isLoggedIn &&
+                  <Link 
+                    id='logIn'
+                    className='btn btn-primary'
+                    to='/log-in'
+                  >Log in</Link>
+                }
               </div>
             )} />
           <Route path='/sign-up' render={() => (
