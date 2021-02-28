@@ -1,13 +1,19 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { Breadcrumb, Card, Col, Row, Button, Form } from 'react-bootstrap';
+import { Breadcrumb, Card, Col, Row, Button, Form, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 function LogIn(props) {
 
     const onSubmit = async (values, actions) => {
         try {
-            await props.logIn(values.username, values.password);
+            const {response, isError} = await props.logIn(values.username, values.password);
+            if (isError) {
+                const data = response.response.data;
+                for (const value in data) {
+                    actions.setFieldError(value, data[value].join(' '));
+                }
+            }
         }
         catch (error) {
             console.error(error)
@@ -31,30 +37,40 @@ function LogIn(props) {
                         onSubmit={onSubmit}
                         
                             render={({
+                                errors,
                                 handleChange,
                                 handleSubmit,
+                                isSubmitting,
                                 values
                             }) => (
-                                <Form noValidate onSubmit={handleSubmit}>
-                                    <Form.Group controlId='username'>
-                                        <Form.Label>Username</Form.Label>
-                                        <Form.Control 
-                                            name='username' 
-                                            onChange={handleChange}
-                                            value={values.username}
-                                        />
-                                    </Form.Group>
-                                    <Form.Group controlId='password'>
-                                        <Form.Label>Password</Form.Label>
-                                        <Form.Control 
-                                            name='password' 
-                                            onChange={handleChange}
-                                            type='password' 
-                                            value={values.password}
-                                        />
-                                    </Form.Group>
-                                    <Button block type='submit' variant='primary'>Log in</Button>
-                                </Form>
+                                <>
+                                    {
+                                        '__all__' in errors &&
+                                        <Alert variant='danger'>
+                                            { errors['__all__']}
+                                        </Alert>
+                                    }
+                                    <Form noValidate onSubmit={handleSubmit}>
+                                        <Form.Group controlId='username'>
+                                            <Form.Label>Username</Form.Label>
+                                            <Form.Control 
+                                                name='username' 
+                                                onChange={handleChange}
+                                                value={values.username}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group controlId='password'>
+                                            <Form.Label>Password</Form.Label>
+                                            <Form.Control 
+                                                name='password' 
+                                                onChange={handleChange}
+                                                type='password' 
+                                                value={values.password}
+                                            />
+                                        </Form.Group>
+                                        <Button block disabled={isSubmitting} type='submit' variant='primary'>Log in</Button>
+                                    </Form>
+                                </>
                             )}
                         />
                     </Card.Body>
