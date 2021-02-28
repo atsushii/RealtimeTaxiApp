@@ -1,45 +1,23 @@
-const { createFactory } = require("react");
+const faker = require('faker');
+
+const randomEmail = faker.internet.email();
 
 const logIn = () => {
     const { username, password } = Cypress.env('credentials');
 
-    cy.intercept('POST', 'log_in', {
-        statusCode: 200,
-        body: {
-            'access': 'ACCESS_TOKEN',
-            'refresh': 'REFRESH_TOKEN'
-        }
-    }).as('logIn');
-
+    cy.intercept('POST', 'log_in').as('logIn');
     cy.visit('/#/log-in');
-    cy.get('input#username').type(username);
+    cy.get('input#username').type(randomEmail);
     cy.get('input#password').type(password, { log: false });
     cy.get('button').contains('Log in').click();
     cy.wait('@logIn');
 }
 
 describe('Authentication', function () {
-    it('Can log in.', function () {
-        logIn()
-        cy.hash().should('eq', '#/');
-        cy.get('button').contains('Log out');
-    });
-
     it('Can sign up', function () {
-        cy.intercept('POST', 'sign_up', {
-            statusCode: 201,
-            body: {
-                'id': 1,
-                'username': 'gary.cole@example.com',
-                'first_name': 'Atsushi',
-                'last_name': 'Miyamoto',
-                'group': 'driver',
-                'photo': '/media/images/photp.jpg'
-            }
-        }).as('signUp');
-
+        cy.intercept('POST', 'sign_up').as('signUp');
         cy.visit('/#/sign-up');
-        cy.get('input#username').type('gary.cole@example.com');
+        cy.get('input#username').type(randomEmail);
         cy.get('input#firstName').type('Gary');
         cy.get('input#lastName').type('Cole');
         cy.get('input#password').type('pAssw0rd', { log: false});
@@ -63,6 +41,14 @@ describe('Authentication', function () {
         cy.get('button#logIn').should('not.exist');
     });
 
+    it('Can log in.', function () {
+        logIn()
+        cy.hash().should('eq', '#/');
+        cy.get('button').contains('Log out');
+    });
+
+
+
     it('Shows am alert on login error', function () {
         const { username, password }= Cypress.env('credentials');
         cy.intercept('POST', 'log_in', {
@@ -75,7 +61,7 @@ describe('Authentication', function () {
             }
         }).as('logIn');
         cy.visit('/#/log-in');
-        cy.get('input#username').type(username);
+        cy.get('input#username').type(randomEmail);
         cy.get('input#password').type(password, { log: false });
         cy.get('button').contains('Log in').click();
         cy.wait('@logIn');
@@ -104,7 +90,7 @@ describe('Authentication', function () {
           }
         }).as('signUp');
         cy.visit('/#/sign-up');
-        cy.get('input#username').type('gary.cole@example.com');
+        cy.get('input#username').type(randomEmail);
         cy.get('input#firstName').type('Gary');
         cy.get('input#lastName').type('Cole');
         cy.get('input#password').type('pAssw0rd', { log: false });

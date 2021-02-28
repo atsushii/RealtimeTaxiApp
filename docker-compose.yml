@@ -49,6 +49,7 @@ services:
       - ./client:/usr/src/app
     environment:
       - CHOKIDIR_USEPOLLING=true
+      - REACT_APP_BASE_URL=http://localhost:8003
   
 volumes:
   taxi-database:
