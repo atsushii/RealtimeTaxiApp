@@ -24,14 +24,28 @@ describe('Authentication', function () {
     });
 
     it('Can sign up', function () {
+        cy.intercept('POST', 'sign_up', {
+            statusCode: 201,
+            body: {
+                'id': 1,
+                'username': 'gary.cole@example.com',
+                'first_name': 'Atsushi',
+                'last_name': 'Miyamoto',
+                'group': 'driver',
+                'photo': '/media/images/photp.jpg'
+            }
+        }).as('signUp');
+
         cy.visit('/#/sign-up');
         cy.get('input#username').type('gary.cole@example.com');
         cy.get('input#firstName').type('Gary');
         cy.get('input#lastName').type('Cole');
         cy.get('input#password').type('pAssw0rd', { log: false});
         cy.get('select#group').select('driver');
+
         cy.get('input#photo').attachFile('images/photo.jpg');
         cy.get('button').contains('Sign up').click();
+        cy.wait('@signUp');
         cy.hash().should('eq', '#/log-in');
     });
 
