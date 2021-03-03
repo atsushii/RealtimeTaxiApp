@@ -6,6 +6,8 @@ import axios from 'axios';
 
 import SignUp from './components/SignUp';
 import LogIn from './components/Login';
+import Driver from './components/Driver';
+import Rider from './components/Rider';
 
 import './App.css'
 
@@ -89,6 +91,12 @@ function App() {
             ) : (
               <LogIn logIn={logIn} />
             )
+          )} />
+          <Route path='/driver' render={()=> (
+            <Driver />
+          )} />
+          <Route path='/rider' render={()=> (
+            <Rider />
           )} />
         </Switch>
       </Container>

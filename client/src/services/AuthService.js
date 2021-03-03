@@ -10,10 +10,10 @@ export const getUser = () => {
 
 export const isDriver = () => {
     const user = getUser();
-    return user && user.group() == 'driver';
+    return user && user.group == 'driver';
 }
 
 export const isRider = () => {
     const user = getUser();
-    return user && user.group() == 'rider';
+    return user && user.group == 'rider';
 }
